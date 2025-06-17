@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Meta Tags -->
+    <title>SpaceCode - Professional Online Code Compiler & IDE by Adhnan</title>
+    <meta name="description" content="SpaceCode is a modern, professional online code compiler and IDE supporting 23+ programming languages. Write, compile, and execute code instantly in your browser with our advanced Monaco editor, real-time compilation, and interactive input support.">
+    <meta name="keywords" content="online code compiler, online IDE, code editor, programming, python compiler, javascript editor, code execution, web-based IDE, monaco editor, multi-language compiler">
+    <meta name="author" content="Adhnan">
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="English">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="SpaceCode - Professional Online Code Compiler & IDE">
+    <meta property="og:description" content="Write, compile, and execute code in 23+ programming languages instantly in your browser. Professional online IDE with advanced features and modern interface.">
+    <meta property="og:image" content="logo.png">
+    <meta property="og:url" content="">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="SpaceCode">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="SpaceCode - Professional Online Code Compiler & IDE">
+    <meta name="twitter:description" content="Write, compile, and execute code in 23+ programming languages instantly in your browser.">
+    <meta name="twitter:image" content="logo.png">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="apple-touch-icon" href="logo.png">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">                <div class="logo">
+                    <img src="logo.png" alt="SpaceCode Logo" class="logo-img">
+                    <span>SpaceCode</span>
+                </div>
+                <div class="header-controls">
+                    <div class="language-selector">
+                        <select id="languageSelect">
+                            <option value="python">Python</option>
+                            <option value="javascript">JavaScript</option>
+                            <option value="java">Java</option>
+                            <option value="cpp">C++</option>
+                            <option value="c">C</option>
+                            <option value="csharp">C#</option>
+                            <option value="go">Go</option>
+                            <option value="rust">Rust</option>
+                            <option value="php">PHP</option>
+                            <option value="ruby">Ruby</option>
+                            <option value="swift">Swift</option>
+                            <option value="kotlin">Kotlin</option>
+                            <option value="scala">Scala</option>
+                            <option value="typescript">TypeScript</option>
+                            <option value="lua">Lua</option>
+                            <option value="perl">Perl</option>
+                            <option value="r">R</option>
+                            <option value="dart">Dart</option>
+                            <option value="haskell">Haskell</option>
+                            <option value="julia">Julia</option>
+                            <option value="bash">Bash</option>
+                            <option value="powershell">PowerShell</option>
+                            <option value="html">HTML</option>
+                        </select>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="button-group">
+                        <button class="run-btn" id="runBtn">
+                            <i class="fas fa-play"></i>
+                            <span>Run</span>
+                        </button>
+                        <button class="clear-btn" id="clearBtn">
+                            <i class="fas fa-trash"></i>
+                            <span>Clear</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Code Editor Panel -->
+            <div class="editor-panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <i class="fas fa-edit"></i>
+                        <span>Code Editor</span>
+                    </div>
+                    <div class="editor-actions">
+                        <button class="action-btn" id="formatBtn" title="Format Code">
+                            <i class="fas fa-magic"></i>
+                        </button>
+                        <button class="action-btn" id="fullscreenBtn" title="Fullscreen">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="editor-container">
+                    <div id="monacoEditor" class="monaco-editor-container"></div>
+                </div>
+            </div>
+
+            <!-- Output Panel -->
+            <div class="output-panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <i class="fas fa-terminal"></i>
+                        <span>Output</span>
+                    </div>
+                    <div class="output-actions">
+                        <button class="action-btn" id="clearOutputBtn" title="Clear Output">
+                            <i class="fas fa-broom"></i>
+                        </button>
+                        <button class="action-btn" id="downloadOutputBtn" title="Download Output">
+                            <i class="fas fa-download"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="output-container">
+                    <div id="output" class="output-content">
+                        <div class="welcome-message">
+                            <i class="fas fa-rocket"></i>
+                            <p>Welcome to CodeCompiler Pro!</p>
+                            <p>Select a language and start coding. Click "Run" to execute your code.</p>
+                        </div>
+                    </div>
+                    <div id="inputContainer" class="input-container" style="display: none;">
+                        <div class="input-prompt">Program is waiting for input:</div>
+                        <div class="input-row">
+                            <input type="text" id="userInput" class="user-input"
+                                placeholder="Enter input and press Enter...">
+                            <button id="sendInputBtn" class="send-input-btn">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="htmlPreview" class="html-preview" style="display: none;">
+                        <iframe id="htmlFrame" sandbox="allow-scripts allow-same-origin"></iframe>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Loading Overlay -->
+        <div class="loading-overlay" id="loadingOverlay">
+            <div class="loading-spinner">
+                <div class="spinner"></div>
+                <p>Compiling your code...</p>
+            </div>
+        </div>        <!-- Toast Notifications -->
+        <div class="toast-container" id="toastContainer"></div>
+        
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <p>&copy; 2025 SpaceCode. Developed by <a href="https://www.adhnan.tech" target="_blank" rel="noopener noreferrer">Adhnan</a></p>
+            </div>
+        </footer>
+    </div> <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.min.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
