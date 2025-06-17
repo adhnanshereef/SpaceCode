@@ -1,6 +1,8 @@
-# CodeCompiler Pro 🚀
+# SpaceCode 🚀
 
 A beautiful, modern online code compiler with professional dark theme, glass morphism effects, and support for multiple programming languages. Built as a pure vanilla web application - no server required!
+
+> **Developed by [Adhnan](https://www.adhnan.tech/)** - A modern, professional online IDE solution
 
 ## Features ✨
 
@@ -143,7 +145,7 @@ Feel free to contribute to this project by:
 
 ## License 📄
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Acknowledgments 🙏
 
@@ -154,4 +156,10 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ---
 
-**Enjoy coding with CodeCompiler Pro!** 🎉
+**Enjoy coding with SpaceCode!** 🎉
+
+## Developer 👨‍💻
+
+**Developed by [Adhnan](https://www.adhnan.tech/)**
+
+© 2025 Adhnan Shereef T. All rights reserved.
