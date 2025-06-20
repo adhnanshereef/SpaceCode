@@ -1,9 +1,9 @@
-class SpaceCode {
-  constructor() {
+class SpaceCode {  constructor() {
     this.editor = null;
     this.initializeElements();
     this.initializeMonacoEditor();
     this.setupEventListeners();
+    this.setupAutoSave();
   }
 
   initializeElements() {
@@ -18,15 +18,19 @@ class SpaceCode {
     this.fullscreenBtn = document.getElementById("fullscreenBtn");
     this.downloadOutputBtn = document.getElementById("downloadOutputBtn");
     this.loadingOverlay = document.getElementById("loadingOverlay");
-    this.toastContainer = document.getElementById("toastContainer");
-    this.inputContainer = document.getElementById("inputContainer");
+    this.toastContainer = document.getElementById("toastContainer");    this.inputContainer = document.getElementById("inputContainer");
     this.userInput = document.getElementById("userInput");
     this.sendInputBtn = document.getElementById("sendInputBtn");
-
-    // Input handling state
+    this.autoSavePanel = document.getElementById("autoSavePanel");
+    this.autoSaveIndicator = document.getElementById("autoSaveIndicator");// Input handling state
     this.isWaitingForInput = false;
     this.currentInputResolver = null;
     this.programOutput = "";
+    
+    // Auto-save state
+    this.autoSaveKey = "spacecode-autosave";
+    this.autoSaveEnabled = true;
+    this.saveTimeout = null;
   }
 
   async initializeMonacoEditor() {
@@ -137,10 +141,11 @@ class SpaceCode {
           bracketPairs: true,
           indentation: true,
         },
-      });
-
-      // Load default code after editor is ready
+      });      // Load default code after editor is ready
       this.loadDefaultCode();
+      
+      // Setup auto-save listeners for Monaco Editor
+      this.setupEditorAutoSave();
     });
   }
 
@@ -191,7 +196,6 @@ class SpaceCode {
       this.showInputContainer(prompt);
     });
   }
-
   changeLanguage() {
     const language = this.languageSelect.value;
     const monacoLanguageMap = {
@@ -223,11 +227,32 @@ class SpaceCode {
     if (this.editor) {
       const monacoLang = monacoLanguageMap[language] || "plaintext";
       monaco.editor.setModelLanguage(this.editor.getModel(), monacoLang);
-      this.loadDefaultCode();
+      
+      // Only load default code if no auto-saved data exists or editor is empty
+      const currentCode = this.editor.getValue().trim();
+      if (!currentCode) {
+        this.loadDefaultCode();
+      }
+      
+      // Trigger auto-save when language changes
+      this.debouncedSave();
     }
   }
-
   loadDefaultCode() {
+    // Check if we have auto-saved data and should skip loading default code
+    try {
+      const savedData = localStorage.getItem(this.autoSaveKey);
+      if (savedData) {
+        const data = JSON.parse(savedData);
+        if (data.code && data.code.trim()) {
+          // Don't load default code if we have saved code
+          return;
+        }
+      }
+    } catch (error) {
+      // Continue with default code if auto-save check fails
+    }
+
     const language = this.languageSelect.value;
     const defaultCodes = {
       python: `# Welcome to Python!
@@ -812,7 +837,7 @@ Write-Host "Sum: $sum"`,
       php: "php",
       ruby: "ruby",
       swift: "swift",
-      kotlin: "kotlin",
+      kotlin: "kt",
       scala: "scala",
       typescript: "typescript",
       lua: "lua",
@@ -919,13 +944,16 @@ Write-Host "Sum: $sum"`,
       setTimeout(() => this.typeWriter(text, index + 1), 10);
     }
     this.output.scrollTop = this.output.scrollHeight;
-  }
-
-  clearEditor() {
+  }  clearEditor() {
     if (this.editor) {
       this.editor.setValue("");
     }
-    this.showToast("Editor cleared", "info");
+    
+    // Clear auto-saved data when user explicitly clears the editor
+    this.clearAutoSave();
+    this.hideAutoSaveIndicator();
+    
+    this.showToast("Editor cleared and auto-save deleted", "info");
   }
 
   clearOutput() {
@@ -992,9 +1020,118 @@ Write-Host "Sum: $sum"`,
       }
     }, 3000);
   }
-
   showLoading(show) {
     this.loadingOverlay.style.display = show ? "flex" : "none";
+  }
+  showAutoSaveIndicator() {
+    if (!this.autoSaveIndicator) return;
+    
+    // Show saving state
+    this.autoSaveIndicator.classList.add('saving');
+    this.autoSaveIndicator.classList.add('show');
+    this.autoSaveIndicator.innerHTML = '<i class="fas fa-sync-alt"></i><span>Saving...</span>';
+    
+    // After a short delay, show saved state
+    setTimeout(() => {
+      this.autoSaveIndicator.classList.remove('saving');
+      this.autoSaveIndicator.innerHTML = '<i class="fas fa-check-circle"></i><span>Auto-saved</span>';
+      
+      // Hide after 4 seconds (slightly longer for better UX)
+      setTimeout(() => {
+        this.autoSaveIndicator.classList.remove('show');
+      }, 4000);
+    }, 800);
+  }
+
+  hideAutoSaveIndicator() {
+    if (this.autoSaveIndicator) {
+      this.autoSaveIndicator.classList.remove('show', 'saving');
+    }
+  }
+
+  // Auto-save functionality
+  setupAutoSave() {
+    // Load saved data on initialization
+    this.loadFromAutoSave();
+  }
+  saveToAutoSave() {
+    if (!this.autoSaveEnabled || !this.editor) return;
+
+    const saveData = {
+      language: this.languageSelect.value,
+      code: this.editor.getValue(),
+      timestamp: Date.now()
+    };
+
+    try {
+      localStorage.setItem(this.autoSaveKey, JSON.stringify(saveData));
+      this.showAutoSaveIndicator();
+    } catch (error) {
+      console.warn("Auto-save failed:", error);
+    }
+  }
+
+  loadFromAutoSave() {
+    try {
+      const savedData = localStorage.getItem(this.autoSaveKey);
+      if (savedData) {
+        const data = JSON.parse(savedData);
+        
+        // Set the language first
+        if (data.language) {
+          this.languageSelect.value = data.language;
+        }
+        
+        // Set the code when editor is ready
+        if (data.code && this.editor) {
+          this.editor.setValue(data.code);
+        } else if (data.code) {
+          // If editor is not ready yet, wait for it
+          const waitForEditor = () => {
+            if (this.editor) {
+              this.editor.setValue(data.code);
+              this.changeLanguage(); // Update syntax highlighting
+            } else {
+              setTimeout(waitForEditor, 100);
+            }
+          };
+          waitForEditor();
+        }
+        
+        this.showToast("Previous work restored!", "info");
+      }
+    } catch (error) {
+      console.warn("Failed to load auto-save:", error);
+    }
+  }
+
+  clearAutoSave() {
+    try {
+      localStorage.removeItem(this.autoSaveKey);
+    } catch (error) {
+      console.warn("Failed to clear auto-save:", error);
+    }
+  }
+
+  debouncedSave() {
+    // Clear existing timeout
+    if (this.saveTimeout) {
+      clearTimeout(this.saveTimeout);
+    }
+    
+    // Set new timeout to save after 1 second of inactivity
+    this.saveTimeout = setTimeout(() => {
+      this.saveToAutoSave();
+    }, 1000);
+  }
+
+  setupEditorAutoSave() {
+    if (!this.editor) return;
+    
+    // Listen for content changes in Monaco Editor
+    this.editor.onDidChangeModelContent(() => {
+      this.debouncedSave();
+    });
   }
 }
 
@@ -1049,8 +1186,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const cursorEffect = document.querySelector(".cursor-effect");
-    if (cursorEffect) {
-      cursorEffect.style.left = e.clientX - 10 + "px";
+    if (cursorEffect) {      cursorEffect.style.left = e.clientX - 10 + "px";
       cursorEffect.style.top = e.clientY - 10 + "px";
     }
   });
