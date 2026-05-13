@@ -297,14 +297,14 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 ## 👨‍💻 Developer
 
-**Developed with ❤️ by [Adhnan](https://www.adhnan.tech/)**
+**Developed with ❤️ by [Adhnan](https://www.adhnan.me/)**
 
-🌐 [Website](https://www.adhnan.tech/) • 💼 LinkedIn • 🐙 GitHub • 📧 Email
+🌐 [Website](https://www.adhnan.me/) • 💼 LinkedIn • 🐙 GitHub • 📧 Email
 
 ---
 
 **🎉 Happy Coding with SpaceCode! 🎉**
 
-*© 2025 Adhnan Shereef T. All rights reserved.*
+*© 2026 Adhnan Shereef T. All rights reserved.*
 
 </div>
