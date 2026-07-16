@@ -299,7 +299,7 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 **Developed with ❤️ by [Adhnan](https://www.adhnan.me/)**
 
-🌐 [Website](https://www.adhnan.me/) • 💼 LinkedIn • 🐙 GitHub • 📧 Email
+🌐 [Website](https://www.adhnan.me/) • 💼 [LinkedIn](https://www.linkedin.com/in/adhnanshereef) • 🐙 GitHub • 📧 Email
 
 ---
 
