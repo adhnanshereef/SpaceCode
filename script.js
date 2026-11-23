@@ -741,6 +741,7 @@ Write-Host "Sum: $sum"`,
     try {
       // First, try to run without input
       let result = await this.executeCode(language, code);
+      let run = this.normalizeRun(result);
 
       // Check if the program needs input (common patterns)
       if (this.needsInput(result, code)) {
@@ -748,9 +749,13 @@ Write-Host "Sum: $sum"`,
         this.showLoading(false);
 
         // Show current output with any prompt message
-        const currentOutput = result.run.stdout || result.run.output || "";
+        const currentOutput = run.stdout || run.output || "";
         if (currentOutput.trim()) {
-          this.displayOutput(currentOutput, "info");
+          const eofPatterns =
+            /EOFError|EOF when reading a line|unexpected end of file/i;
+          if (!eofPatterns.test(currentOutput)) {
+            this.displayOutput(currentOutput, "info");
+          }
         }
 
         // Wait for user input with the actual prompt message
@@ -763,18 +768,19 @@ Write-Host "Sum: $sum"`,
 
         // Re-run with input
         result = await this.executeCode(language, code, userInput);
+        run = this.normalizeRun(result);
       }
 
-      if (result.run.code === 0) {
+      if (run.code === 0) {
         const finalOutput =
-          result.run.output ||
-          result.run.stdout ||
+          run.output ||
+          run.stdout ||
           "Program executed successfully";
         this.displayOutput(finalOutput, "success");
         this.showToast("Code executed successfully!", "success");
       } else {
         const errorOutput = this.formatError(
-          result.run.stderr || result.run.output
+          run.stderr || run.output
         );
         this.displayOutput(errorOutput, "error");
         this.showToast("Execution completed with errors", "error");
@@ -789,6 +795,18 @@ Write-Host "Sum: $sum"`,
       this.showToast("Failed to execute code", "error");
     }
   }
+
+  normalizeRun(result) {
+    const run = result && result.run ? result.run : {};
+    return {
+      stdout: run.stdout || "",
+      stderr: run.stderr || "",
+      output: run.output || "",
+      code: typeof run.code === "number" ? run.code : 0,
+      status: run.status || null,
+    };
+  }
+
   needsInput(result, code) {
     const inputPatterns = {
       python: /input\s*\(/,
@@ -818,10 +836,18 @@ Write-Host "Sum: $sum"`,
     const language = this.languageSelect.value;
     const hasInputCode =
       inputPatterns[language] && inputPatterns[language].test(code);
-    const hasPromptOutput =
-      result.run.stdout && result.run.stdout.trim().length > 0;
+    if (!hasInputCode) return false;
 
-    return hasInputCode && hasPromptOutput && result.run.code === 0;
+    const run = this.normalizeRun(result);
+    const combinedOutput = `${run.stdout}\n${run.stderr}\n${run.output}`;
+    const hasInputError =
+      /EOFError|EOF when reading a line|unexpected end of file|no data to read|read from stdin/i.test(
+        combinedOutput
+      );
+    const hasPromptOutput =
+      Boolean(run.stdout) && run.stdout.trim().length > 0;
+
+    return hasInputError || hasPromptOutput;
   }
 
   async executeCode(language, code, stdin = "") {
