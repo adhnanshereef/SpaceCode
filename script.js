@@ -875,12 +875,12 @@ Write-Host "Sum: $sum"`,
       powershell: "ps1",
     };
 
-    const pistonLanguage = languageMap[language] || language;
+    const compilerLanguage = languageMap[language] || language;
     const fileExtension = fileExtensionMap[language] || "txt";
     const fileName = "main." + fileExtension;
 
     const requestBody = {
-      language: pistonLanguage,
+      language: compilerLanguage,
       version: "*",
       files: [
         {
@@ -898,7 +898,7 @@ Write-Host "Sum: $sum"`,
       run_memory_limit: -1,
     };
 
-    const response = await fetch("https://emkc.org/api/v2/piston/execute", {
+    const response = await fetch("/api/execute", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

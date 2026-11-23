@@ -25,7 +25,7 @@ A beautiful, modern online code compiler and IDE with professional glassmorphism
 - **Interpreted Languages**: Python, JavaScript, TypeScript, PHP, Ruby, Lua, Perl, R, Julia, Dart
 - **Scripting Languages**: Bash, PowerShell
 - **Web Technologies**: HTML with live preview, CSS, and JavaScript execution
-- **Real-time Compilation**: Uses Piston API for instant code execution
+- **Real-time Compilation**: Uses the OnlineCompiler.io Piston-compatible API through a secure Cloudflare Worker
 
 ### **🔧 Advanced Code Editor**
 - **Monaco Editor**: Same editor used in VS Code with full feature set
@@ -78,7 +78,7 @@ A beautiful, modern online code compiler and IDE with professional glassmorphism
 - **Custom CSS Variables**: Consistent theming and easy customization
 
 ### **External Services & APIs**
-- **Piston API**: Code compilation and execution service (emkc.org)
+- **OnlineCompiler.io API**: Piston-compatible code compilation and execution service
 - **Font Awesome 6.0**: Professional icon library
 - **Google Fonts**: Inter and Fira Code typography
 - **Google Analytics**: User analytics and tracking
@@ -94,8 +94,8 @@ A beautiful, modern online code compiler and IDE with professional glassmorphism
 ### Prerequisites
 - **Modern Web Browser**: Chrome (recommended), Firefox, Safari, Edge, or Opera
 - **JavaScript Enabled**: Required for full functionality
-- **Internet Connection**: Needed for code compilation via Piston API
-- **No Server Required**: Pure client-side application
+- **Internet Connection**: Needed for code compilation via the OnlineCompiler.io API
+- **Static Deployment**: Deploy the frontend and API proxy with Cloudflare Workers
 
 ### Quick Start
 1. **Download**: Clone or download the repository
@@ -103,6 +103,17 @@ A beautiful, modern online code compiler and IDE with professional glassmorphism
 3. **Code**: Select a language and start coding immediately!
 4. **Run**: Click "Run" to execute your code
 5. **Save**: Your work is automatically saved and restored
+
+### Cloudflare Deployment
+
+The browser sends code execution requests to `/api/execute`. Deploy this project as a Cloudflare Worker with static assets, then configure the API key as a secret:
+
+```bash
+npx wrangler secret put ONLINECOMPILER_API_KEY
+npx wrangler deploy
+```
+
+The secret must be an API key issued by OnlineCompiler.io. Do not add the API key to `index.html`, `script.js`, or another browser-visible file.
 
 ## 📖 Usage Examples
 
@@ -193,7 +204,7 @@ int main() {
 - **Custom Theme**: Glassmorphism dark theme with transparent background
 
 ### **Real-time Code Execution**
-- **Piston API**: Uses Engineer Man's Piston API for code compilation
+- **OnlineCompiler.io API**: Uses the Piston-compatible API for code compilation
 - **23+ Languages**: Supports all major programming languages
 - **Error Handling**: Comprehensive error reporting with clean formatting
 - **Performance**: Optimized API calls with proper timeout handling
@@ -214,6 +225,8 @@ SpaceCode/
 ├── script.js           # Core JavaScript functionality
 ├── styles.css          # Glassmorphism styling and animations
 ├── logo.png           # Application logo and favicon
+├── worker.js          # Cloudflare Worker API proxy
+├── wrangler.toml      # Cloudflare Workers deployment config
 ├── README.md          # This documentation
 └── LICENSE            # MIT License file
 ```
@@ -282,7 +295,7 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 ### **Technologies & Services**
 - **Monaco Editor**: Microsoft's VS Code editor for the web
-- **Piston API**: Code execution service by Engineer Man
+- **OnlineCompiler.io**: Piston-compatible code execution service
 - **Font Awesome**: Comprehensive icon library
 - **Google Fonts**: Beautiful typography (Inter & Fira Code)
 
