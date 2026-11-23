@@ -2,7 +2,7 @@
 
 A beautiful, modern online code compiler and IDE with professional glassmorphism design, supporting 23+ programming languages. Built as a pure vanilla web application with advanced features including auto-save, interactive input handling, and real-time code execution.
 
-> **Developed by [Adhnan](https://www.adhnan.tech/)** - A comprehensive, professional online IDE solution
+> **Developed by [Adhnan](https://www.adhnan.me/)** - A comprehensive, professional online IDE solution
 
 ## ✨ Features
 
